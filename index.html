@@ -46,11 +46,81 @@ body {
   padding: 0.3rem 0.45rem;
 }
 .lang-btn {
-  font-size: 1.3rem; background: none; border: none; cursor: pointer;
-  padding: 0.2rem 0.4rem; opacity: 0.45; transition: opacity 0.25s; line-height: 1;
+  display: flex; align-items: center; gap: 0.35rem;
+  font-family: 'Jost', sans-serif; font-size: 1rem;
+  background: none; border: none; cursor: pointer;
+  padding: 0.25rem 0.5rem; opacity: 0.45; transition: opacity 0.25s; line-height: 1;
+}
+.lang-btn span {
+  font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--paper); font-weight: 300;
 }
 .lang-btn:hover  { opacity: 0.85; }
 .lang-btn.active { opacity: 1; filter: drop-shadow(0 0 5px rgba(196,151,58,0.7)); }
+.lang-btn.active span { color: var(--gold2); }
+@media(max-width:600px){
+  #lang-bar { top: 0.9rem; right: 0.9rem; padding: 0.25rem 0.3rem; }
+  .lang-btn { padding: 0.25rem 0.35rem; gap: 0.25rem; font-size: 0.9rem; }
+  .lang-btn span { font-size: 0.55rem; letter-spacing: 0.1em; }
+}
+
+/* ══════════════════════════════
+   LANG GATE (portada de idioma)
+══════════════════════════════ */
+#lang-gate { display: none; }
+html.needs-lang, html.needs-lang body { overflow: hidden; height: 100%; }
+html.needs-lang #lang-gate {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: fixed; inset: 0; z-index: 900;
+  background: var(--dark);
+  padding: 2.5rem 1.5rem;
+  overflow-y: auto;
+}
+#lang-gate.closing { opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+#lang-gate::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(196,96,58,0.14) 0%, transparent 70%);
+}
+.gate-inner { position: relative; z-index: 1; width: 100%; max-width: 460px; text-align: center; }
+.gate-names {
+  font-family: 'Tenor Sans', serif; font-style: italic;
+  font-size: clamp(2.6rem, 11vw, 3.6rem); line-height: 1;
+  color: var(--paper);
+}
+.gate-names .amp { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 0.6em; }
+.gate-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(240,232,213,0.7); margin-top: 1rem;
+}
+.gate-rule { width: 44px; height: 1px; background: var(--gold); margin: 2rem auto 1.6rem; opacity: 0.6; }
+.gate-hint {
+  font-size: 0.62rem; letter-spacing: 0.36em; text-transform: uppercase;
+  color: rgba(196,151,58,0.75); margin-bottom: 1.6rem;
+}
+.gate-list { display: flex; flex-direction: column; gap: 0.85rem; }
+.gate-btn {
+  display: flex; align-items: center; gap: 1rem;
+  width: 100%; padding: 1.05rem 1.3rem; cursor: pointer; text-align: left;
+  font-family: 'Jost', sans-serif;
+  background: rgba(253,246,237,0.05);
+  border: 1px solid rgba(196,151,58,0.35);
+  color: var(--paper);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.gate-btn:hover, .gate-btn:focus-visible {
+  background: rgba(253,246,237,0.12);
+  border-color: var(--gold); transform: translateY(-2px); outline: none;
+}
+.gate-flag { font-size: 1.7rem; line-height: 1; }
+.gate-labels { display: flex; flex-direction: column; gap: 0.28rem; }
+.gate-lang { font-family: 'Tenor Sans', serif; font-size: 1.15rem; letter-spacing: 0.04em; }
+.gate-action { font-size: 0.72rem; letter-spacing: 0.16em; color: rgba(240,232,213,0.65); }
+.gate-arrow { margin-left: auto; color: var(--gold); display: flex; }
+.gate-foot {
+  margin-top: 1.8rem; font-size: 0.62rem; letter-spacing: 0.2em;
+  color: rgba(240,232,213,0.45); line-height: 1.9;
+}
 
 /* ══════════════════════════════
    MAIN CONTENT (after envelope)
@@ -133,8 +203,13 @@ body {
 .venue-note { font-size:0.92rem; color:#2a1e12; margin-top:1.4rem; line-height:1.95; max-width:500px; margin-left:auto; margin-right:auto; }
 
 /* ── GENERIC ── */
-.reveal { opacity:0; transform:translateY(30px); transition:opacity 0.9s ease,transform 0.9s ease; }
-.reveal.visible { opacity:1; transform:translateY(0); }
+/* El contenido es visible por defecto: solo se oculta si hay JS para volver a
+   mostrarlo. Así un fallo del observador nunca deja una sección en blanco. */
+html.js .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.9s ease,transform 0.9s ease; }
+html.js .reveal.visible { opacity:1; transform:translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal { opacity:1; transform:none; transition:none; }
+}
 .section-inner { max-width:700px; margin:0 auto; text-align:center; }
 .s-tag { font-size:0.78rem; letter-spacing:0.38em; color:var(--terra); text-transform:uppercase; margin-bottom:1.2rem; font-weight:500; }
 .s-title { font-family:'Tenor Sans',serif; font-style:italic; font-size:clamp(2rem,5vw,3.2rem); color:var(--dark); margin-bottom:2rem; line-height:1.2; }
@@ -205,6 +280,38 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
 .friday-meta-item { flex: 1; min-width: 120px; }
 .friday-meta-label { font-size: 0.5rem; letter-spacing: 0.45em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.4rem; }
 .friday-meta-value { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--dark); font-style: italic; }
+.friday-plan { display: flex; flex-direction: column; gap: 1.4rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed rgba(139,38,53,0.2); }
+.friday-step { display: flex; gap: 1.1rem; align-items: flex-start; }
+.friday-time {
+  flex-shrink: 0; min-width: 3.4rem; padding-right: 1rem; padding-top: 0.2rem;
+  font-family: 'Jost', sans-serif; font-weight: 300; font-size: 0.95rem;
+  color: var(--garnet); border-right: 1px solid rgba(139,38,53,0.22);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.04em;
+}
+.friday-step-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.15rem; color: var(--dark); margin-bottom: 0.35rem; }
+.friday-step-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 0.7rem; margin-bottom: 0.35rem; }
+.friday-step-head .friday-step-title { margin-bottom: 0; }
+.friday-optional {
+  flex-shrink: 0; padding: 0.22rem 0.6rem;
+  border: 1px solid rgba(139,38,53,0.35); color: var(--garnet);
+  font-size: 0.5rem; letter-spacing: 0.32em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.friday-step-text { font-size: 0.92rem; line-height: 1.75; color: var(--muted); }
+.friday-map {
+  display: flex; align-items: center; gap: 0.9rem;
+  margin-top: 1.5rem; padding: 0.95rem 1.1rem;
+  border: 1px solid rgba(196,96,58,0.35); background: rgba(196,96,58,0.05);
+  text-decoration: none; transition: border-color 0.3s, background 0.3s;
+}
+.friday-map:hover, .friday-map:focus-visible { border-color: var(--terra); background: rgba(196,96,58,0.1); outline: none; }
+.friday-map-label { font-size: 0.52rem; letter-spacing: 0.35em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.2rem; }
+.friday-map-name { font-size: 0.82rem; color: var(--dark); font-style: italic; }
+.friday-tip { margin-top: 1.2rem; font-size: 0.8rem; line-height: 1.7; color: var(--muted); font-style: italic; }
+@media(max-width:520px){
+  .friday-step { gap: 0.9rem; }
+  .friday-time { min-width: 3rem; padding-right: 0.75rem; font-size: 0.9rem; }
+}
 
 /* ══════════════════════════════
    AFTER-PARTY HALLOWEEN
@@ -357,24 +464,69 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
 .venue-note { font-size: 1.02rem; line-height: 1.95; }
 .venue-callout-text { font-size: 1.1rem; }
 .friday-meta-value { font-size: 1.12rem; }
+.friday-step-title { font-size: 1.22rem; }
+.friday-step-text { font-size: 0.98rem; line-height: 1.8; }
+.friday-time { font-size: 1.02rem; }
+.friday-tip { font-size: 0.86rem; }
 .gift-quote { font-size: clamp(1.15rem, 2.2vw, 1.45rem); }
 .iban-value { font-size: clamp(1.05rem, 2vw, 1.25rem); }
 /* Etiquetas / eyebrows: un punto más grandes y con menos tracking para que se lean */
 .s-tag { font-size: 0.72rem; letter-spacing: 0.3em; }
 .cd-lbl, .granada-cat-sub, .friday-meta-label, .iban-label, .step-when,
-.after-map-label, .c-type, .after-badge, .g-cat, .section-photo-cap { font-size: 0.6rem; letter-spacing: 0.28em; }
+.after-map-label, .friday-map-label, .c-type, .after-badge, .g-cat, .section-photo-cap { font-size: 0.6rem; letter-spacing: 0.28em; }
 .g-map, .step-go { font-size: 0.62rem; letter-spacing: 0.28em; }
 .cd-label { font-size: 0.64rem; letter-spacing: 0.4em; }
 @media(max-width:600px){ .s-text { font-size: 1.05rem; } .g-desc { font-size: 0.95rem; } }
 </style>
+<script>
+/* Decide antes de pintar si hay que mostrar la portada de idioma */
+(function(){
+  document.documentElement.className += ' js';
+  var stored = null;
+  try { stored = localStorage.getItem('bodaLang'); } catch(e) {}
+  if (['es','en','sq'].indexOf(stored) === -1) {
+    document.documentElement.className += ' needs-lang';
+  } else {
+    document.documentElement.lang = stored;
+  }
+})();
+</script>
 </head>
 <body>
 
+<!-- LANG GATE -->
+<div id="lang-gate" role="dialog" aria-modal="true" aria-label="Elige idioma · Choose language · Zgjidh gjuhën">
+  <div class="gate-inner">
+    <div class="gate-names">Jose<span class="amp"> &amp; </span>Oarda</div>
+    <p class="gate-date">31 · 10 · 2026 · Granada</p>
+    <div class="gate-rule"></div>
+    <p class="gate-hint">Elige idioma · Choose language · Zgjidh gjuhën</p>
+    <div class="gate-list">
+      <button class="gate-btn" onclick="chooseLang('es')" lang="es">
+        <span class="gate-flag">🇪🇸</span>
+        <span class="gate-labels"><span class="gate-lang">Español</span><span class="gate-action">Seguir en español</span></span>
+        <span class="gate-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </button>
+      <button class="gate-btn" onclick="chooseLang('en')" lang="en">
+        <span class="gate-flag">🇬🇧</span>
+        <span class="gate-labels"><span class="gate-lang">English</span><span class="gate-action">Continue in English</span></span>
+        <span class="gate-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </button>
+      <button class="gate-btn" onclick="chooseLang('sq')" lang="sq">
+        <span class="gate-flag">🇦🇱</span>
+        <span class="gate-labels"><span class="gate-lang">Shqip</span><span class="gate-action">Vazhdo në shqip</span></span>
+        <span class="gate-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </button>
+    </div>
+    <p class="gate-foot">Podéis cambiarlo arriba a la derecha<br>You can change it any time · Mund ta ndryshoni në çdo moment</p>
+  </div>
+</div>
+
 <!-- LANG BAR -->
 <div id="lang-bar">
-  <button class="lang-btn active" onclick="setLang('es',this)" title="Español">🇪🇸</button>
-  <button class="lang-btn" onclick="setLang('sq',this)" title="Shqip">🇦🇱</button>
-  <button class="lang-btn" onclick="setLang('en',this)" title="English">🇬🇧</button>
+  <button class="lang-btn active" data-lang="es" onclick="setLang('es')" title="Español" aria-label="Español">🇪🇸<span>ES</span></button>
+  <button class="lang-btn" data-lang="sq" onclick="setLang('sq')" title="Shqip" aria-label="Shqip">🇦🇱<span>SQ</span></button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')" title="English" aria-label="English">🇬🇧<span>EN</span></button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -488,140 +640,6 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
     </div>
   </div>
 
-  <!-- HISTORIA -->
-  <div class="story-band">
-    <svg class="story-corner tl" viewBox="0 0 200 280" fill="none">
-      <path d="M150 280 C145 220 128 155 105 95 C88 45 65 10 40 -10" stroke="#6b7c5a" stroke-width="1.5"/>
-      <g transform="translate(40,-10)">
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(60)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(240)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(300)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(30)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(150)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(270)"/>
-        <circle cx="0" cy="0" r="8" fill="#c4973a"/>
-        <circle cx="0" cy="0" r="4" fill="#ddb96a"/>
-      </g>
-    </svg>
-    <svg class="story-corner br" viewBox="0 0 200 280" fill="none">
-      <path d="M150 280 C145 220 128 155 105 95 C88 45 65 10 40 -10" stroke="#6b7c5a" stroke-width="1.5"/>
-      <g transform="translate(40,-10)">
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(60)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(240)"/>
-        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(300)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(30)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(150)"/>
-        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(270)"/>
-        <circle cx="0" cy="0" r="8" fill="#c4973a"/>
-        <circle cx="0" cy="0" r="4" fill="#ddb96a"/>
-      </g>
-    </svg>
-    <div class="reveal">
-      <div class="section-inner">
-        <p class="s-tag" data-i18n="story-tag">Nuestra historia</p>
-        <p class="s-title" data-i18n="story-title">Cómo llegamos hasta aquí</p>
-        <blockquote class="story-quote" data-i18n="story-quote">"Granada nos unió, y Granada será testigo de cómo decimos sí para siempre."</blockquote>
-        <p class="s-text" data-i18n="story-text">Hay ciudades que marcan un antes y un después. Para nosotros, esa ciudad es Granada. Entre sus calles, sus miradores y el eco de la Alhambra, nuestra historia comenzó a escribirse.<br><br>Hoy queremos compartir con vosotros el capítulo más bonito: el de convertirnos en familia. Gracias por ser parte de este día tan especial para nosotros.</p>
-      </div>
-      <div class="section-photo">
-        <img src="img/alhambra.webp" alt="La Alhambra al amanecer, Granada" loading="lazy">
-        <p class="section-photo-cap" data-i18n="story-cap">Granada, donde todo empezó</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- BANDA ROMBOS MEDIA -->
-  <div style="background:var(--paper);overflow:hidden;line-height:0;">
-    <svg viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="none">
-      <rect width="1440" height="50" fill="#fdf6ed"/>
-      <g fill="none" stroke="rgba(196,96,58,0.3)" stroke-width="0.9">
-        <use href="#dmnd" transform="translate(36,25)"/>
-        <use href="#dmnd" transform="translate(108,25)"/>
-        <use href="#dmnd" transform="translate(180,25)"/>
-        <use href="#dmnd" transform="translate(252,25)"/>
-        <use href="#dmnd" transform="translate(324,25)"/>
-        <use href="#dmnd" transform="translate(396,25)"/>
-        <use href="#dmnd" transform="translate(468,25)"/>
-        <use href="#dmnd" transform="translate(540,25)"/>
-        <use href="#dmnd" transform="translate(612,25)"/>
-        <use href="#dmnd" transform="translate(684,25)"/>
-        <use href="#dmnd" transform="translate(756,25)"/>
-        <use href="#dmnd" transform="translate(828,25)"/>
-        <use href="#dmnd" transform="translate(900,25)"/>
-        <use href="#dmnd" transform="translate(972,25)"/>
-        <use href="#dmnd" transform="translate(1044,25)"/>
-        <use href="#dmnd" transform="translate(1116,25)"/>
-        <use href="#dmnd" transform="translate(1188,25)"/>
-        <use href="#dmnd" transform="translate(1260,25)"/>
-        <use href="#dmnd" transform="translate(1332,25)"/>
-        <use href="#dmnd" transform="translate(1404,25)"/>
-      </g>
-    </svg>
-  </div>
-
-  <!-- LUGAR -->
-  <div class="arch-section">
-    <div class="reveal">
-      <div class="section-inner">
-        <p class="s-tag" data-i18n="venue-tag">El lugar</p>
-        <p class="s-title" data-i18n="venue-title">Ceremonia &amp; Celebración</p>
-        <div class="venue-arch">
-          <svg viewBox="0 0 380 420" fill="none">
-            <path d="M40 420 L40 210 Q40 40 190 40 Q340 40 340 210 L340 420" stroke="#c4603a" stroke-width="2.5" fill="rgba(196,96,58,0.04)"/>
-            <path d="M65 420 L65 218 Q65 75 190 75 Q315 75 315 218 L315 420" stroke="#c4973a" stroke-width="1.2" fill="none" opacity="0.5"/>
-            <path d="M40 210 Q40 150 80 120 Q105 140 115 170 Q75 190 75 210" fill="#c4603a" opacity="0.12"/>
-            <path d="M340 210 Q340 150 300 120 Q275 140 265 170 Q305 190 305 210" fill="#c4603a" opacity="0.12"/>
-            <g stroke="#c4973a" stroke-width="1" fill="none" opacity="0.7">
-              <path d="M75 216 L88 198 L101 216 L114 198 L127 216 L140 198 L153 216"/>
-              <path d="M227 216 L240 198 L253 216 L266 198 L279 216 L292 198 L305 216"/>
-            </g>
-            <g fill="none" stroke="rgba(196,151,58,0.45)" stroke-width="0.8">
-              <polygon points="190,50 202,68 190,86 178,68"/>
-              <polygon points="100,140 110,156 100,172 90,156"/>
-              <polygon points="280,140 290,156 280,172 270,156"/>
-            </g>
-          </svg>
-          <div class="venue-arch-content">
-            <p class="venue-name">AC Palacio de Santa Paula</p>
-            <p class="venue-addr">Gran Vía de Colón, 31 · Granada</p>
-          </div>
-        </div>
-
-        <!-- Google Maps -->
-        <div style="margin-top:2.5rem;">
-          <a href="https://maps.app.goo.gl/5rAtfLQf5ZzH1qhN8" target="_blank"
-             style="display:flex; align-items:center; justify-content:center; gap:1rem; padding:1.2rem 2rem; border:1px solid rgba(196,151,58,0.4); text-decoration:none; transition:border-color 0.3s, background 0.3s; background:#1a120a;"
-             onmouseover="this.style.borderColor='var(--gold)';this.style.background='#2a1e12'"
-             onmouseout="this.style.borderColor='rgba(196,151,58,0.4)';this.style.background='#1a120a'">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4973a" stroke-width="1.5">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-            </svg>
-            <div style="text-align:left;">
-              <p style="font-size:0.52rem; letter-spacing:0.35em; color:rgba(196,151,58,0.6); text-transform:uppercase; margin-bottom:0.25rem;">Cómo llegar</p>
-              <p style="font-size:0.9rem; color:var(--paper); font-family:'Tenor Sans',serif;">AC Palacio de Santa Paula</p>
-              <p style="font-size:0.75rem; color:rgba(253,246,237,0.45); font-style:italic; margin-top:0.15rem;">Gran Vía de Colón, 31 · Granada</p>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,151,58,0.5)" stroke-width="1.5" style="margin-left:auto; flex-shrink:0;">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </div>
-        <div class="venue-callout">
-          <span class="venue-callout-icon">✦</span>
-          <p class="venue-callout-text" data-i18n="venue-callout">Un único lugar para todo el día: la ceremonia y el banquete se celebran en el mismo enclave. No tendréis que desplazaros entre dos sitios.</p>
-        </div>
-        <p class="s-text" style="margin-top:1.5rem;" data-i18n="venue-text">Un antiguo convento del siglo XVI convertido en el escenario perfecto para celebrar el amor. El Palacio de Santa Paula será el lugar donde compartiremos contigo uno de los días más especiales de nuestra vida.</p>
-      </div>
-    </div>
-  </div>
-
   <!-- BANDA ROMBOS BAJO VENUE -->
   <div style="background:var(--paper);overflow:hidden;line-height:0;">
     <svg viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="none">
@@ -661,16 +679,42 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
         <p class="s-text" data-i18n="friday-intro">Queremos que lleguéis con tiempo y que nos conozcamos todos antes del gran día. Os invitamos a una velada relajada para tomar algo, presentar a quien no se conoce y empezar a celebrar juntos.</p>
         <div class="friday-card">
           <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--dark);line-height:1.7;" data-i18n="friday-body">Nada de protocolo ni etiqueta: venid como estéis. Es la forma de empezar el fin de semana entre los nuestros y de poner cara a quien todavía no conozcáis.</p>
-          <div class="friday-meta">
-            <div class="friday-meta-item">
-              <p class="friday-meta-label" data-i18n="friday-when-label">Cuándo</p>
-              <p class="friday-meta-value"><span data-i18n="friday-when">Viernes 30 de octubre · a partir de las 20:00h</span></p>
+          <div class="friday-plan">
+            <div class="friday-step">
+              <p class="friday-time" data-i18n="friday-t1">19:30</p>
+              <div>
+                <div class="friday-step-head">
+                  <p class="friday-step-title" data-i18n="friday-s1-title">Mirador de San Nicolás</p>
+                  <span class="friday-optional" data-i18n="friday-s1-badge">Opcional</span>
+                </div>
+                <p class="friday-step-text" data-i18n="friday-s1-text">Para los valientes: subimos a ver la Alhambra iluminada y bajamos andando todos juntos hasta Plaza Nueva — unos 20 minutos, todo cuesta abajo. Si no lo habéis visto nunca, merece muchísimo la pena.</p>
+              </div>
             </div>
-            <div class="friday-meta-item">
-              <p class="friday-meta-label" data-i18n="friday-where-label">Dónde</p>
-              <p class="friday-meta-value"><span data-i18n="friday-where">Os confirmaremos el lugar muy pronto</span></p>
+            <div class="friday-step">
+              <p class="friday-time" data-i18n="friday-t2">20:00</p>
+              <div>
+                <div class="friday-step-head">
+                  <p class="friday-step-title" data-i18n="friday-s2-title">La Cueva de 1900 · Santa Ana</p>
+                  <span class="friday-optional" data-i18n="friday-s2-badge">Aperitivo</span>
+                </div>
+                <p class="friday-step-text" data-i18n="friday-s2-text">Aquí estaremos todos. Es un aperitivo para tomar algo y picar juntos. Si os saltáis el mirador, nos vemos directamente aquí a las 20:00.</p>
+              </div>
             </div>
           </div>
+          <a class="friday-map" href="https://www.google.com/maps/search/?api=1&amp;query=La+Cueva+de+1900+Santa+Ana,+Plaza+de+Santa+Ana+2,+Granada" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4603a" stroke-width="1.5" style="flex-shrink:0;">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+            <div>
+              <p class="friday-map-label" data-i18n="friday-map">Cómo llegar</p>
+              <p class="friday-map-name">La Cueva de 1900 · Plaza de Santa Ana, 2</p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,96,58,0.5)" stroke-width="1.5" style="margin-left:auto; flex-shrink:0;">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <p class="friday-tip" data-i18n="friday-tip">A esa hora ya habrá anochecido, así que la vista es la de la Alhambra encendida. Traed calzado cómodo: la bajada del Albaicín es de cuesta y adoquín.</p>
         </div>
       </div>
     </div>
@@ -717,6 +761,19 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
             </div>
           </div>
         </div>
+        <a class="friday-map" style="max-width:560px;margin-left:auto;margin-right:auto;" href="https://www.google.com/maps/search/?api=1&amp;query=Palacio+de+Santa+Paula,+Calle+Gran+V%C3%ADa+de+Col%C3%B3n+31,+Granada" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4603a" stroke-width="1.5" style="flex-shrink:0;">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <div>
+            <p class="friday-map-label" data-i18n="details-map">Cómo llegar</p>
+            <p class="friday-map-name">Palacio de Santa Paula · Gran Vía de Colón, 31</p>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,96,58,0.5)" stroke-width="1.5" style="margin-left:auto; flex-shrink:0;">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
         <p class="day-note" data-i18n="day-note">El after-party de Halloween sigue justo después en la Discoteca Aliatar — no hace falta cambiarse, seguimos la fiesta tal cual.</p>
       </div>
     </div>
@@ -1122,6 +1179,140 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
     </div>
   </div>
 
+  <!-- BANDA ROMBOS MEDIA -->
+  <div style="background:var(--paper);overflow:hidden;line-height:0;">
+    <svg viewBox="0 0 1440 50" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="none">
+      <rect width="1440" height="50" fill="#fdf6ed"/>
+      <g fill="none" stroke="rgba(196,96,58,0.3)" stroke-width="0.9">
+        <use href="#dmnd" transform="translate(36,25)"/>
+        <use href="#dmnd" transform="translate(108,25)"/>
+        <use href="#dmnd" transform="translate(180,25)"/>
+        <use href="#dmnd" transform="translate(252,25)"/>
+        <use href="#dmnd" transform="translate(324,25)"/>
+        <use href="#dmnd" transform="translate(396,25)"/>
+        <use href="#dmnd" transform="translate(468,25)"/>
+        <use href="#dmnd" transform="translate(540,25)"/>
+        <use href="#dmnd" transform="translate(612,25)"/>
+        <use href="#dmnd" transform="translate(684,25)"/>
+        <use href="#dmnd" transform="translate(756,25)"/>
+        <use href="#dmnd" transform="translate(828,25)"/>
+        <use href="#dmnd" transform="translate(900,25)"/>
+        <use href="#dmnd" transform="translate(972,25)"/>
+        <use href="#dmnd" transform="translate(1044,25)"/>
+        <use href="#dmnd" transform="translate(1116,25)"/>
+        <use href="#dmnd" transform="translate(1188,25)"/>
+        <use href="#dmnd" transform="translate(1260,25)"/>
+        <use href="#dmnd" transform="translate(1332,25)"/>
+        <use href="#dmnd" transform="translate(1404,25)"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- HISTORIA -->
+  <div class="story-band">
+    <svg class="story-corner tl" viewBox="0 0 200 280" fill="none">
+      <path d="M150 280 C145 220 128 155 105 95 C88 45 65 10 40 -10" stroke="#6b7c5a" stroke-width="1.5"/>
+      <g transform="translate(40,-10)">
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(60)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(120)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(240)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#c4603a" opacity="0.8" transform="rotate(300)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(30)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(150)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#e8895a" opacity="0.9" transform="rotate(270)"/>
+        <circle cx="0" cy="0" r="8" fill="#c4973a"/>
+        <circle cx="0" cy="0" r="4" fill="#ddb96a"/>
+      </g>
+    </svg>
+    <svg class="story-corner br" viewBox="0 0 200 280" fill="none">
+      <path d="M150 280 C145 220 128 155 105 95 C88 45 65 10 40 -10" stroke="#6b7c5a" stroke-width="1.5"/>
+      <g transform="translate(40,-10)">
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(60)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(120)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(240)"/>
+        <ellipse cx="0" cy="-20" rx="10" ry="20" fill="#8b2635" opacity="0.8" transform="rotate(300)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(30)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(150)"/>
+        <ellipse cx="0" cy="-12" rx="7" ry="12" fill="#b03545" opacity="0.9" transform="rotate(270)"/>
+        <circle cx="0" cy="0" r="8" fill="#c4973a"/>
+        <circle cx="0" cy="0" r="4" fill="#ddb96a"/>
+      </g>
+    </svg>
+    <div class="reveal">
+      <div class="section-inner">
+        <p class="s-tag" data-i18n="story-tag">Nuestra historia</p>
+        <p class="s-title" data-i18n="story-title">Cómo llegamos hasta aquí</p>
+        <blockquote class="story-quote" data-i18n="story-quote">"Granada nos unió, y Granada será testigo de cómo decimos sí para siempre."</blockquote>
+        <p class="s-text" data-i18n="story-text">Hay ciudades que marcan un antes y un después. Para nosotros, esa ciudad es Granada. Entre sus calles, sus miradores y el eco de la Alhambra, nuestra historia comenzó a escribirse.<br><br>Hoy queremos compartir con vosotros el capítulo más bonito: el de convertirnos en familia. Gracias por ser parte de este día tan especial para nosotros.</p>
+      </div>
+      <div class="section-photo">
+        <img src="img/alhambra.webp" alt="La Alhambra al amanecer, Granada" loading="lazy">
+        <p class="section-photo-cap" data-i18n="story-cap">Granada, donde todo empezó</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LUGAR -->
+  <div class="arch-section">
+    <div class="reveal">
+      <div class="section-inner">
+        <p class="s-tag" data-i18n="venue-tag">El lugar</p>
+        <p class="s-title" data-i18n="venue-title">Ceremonia &amp; Celebración</p>
+        <div class="venue-arch">
+          <svg viewBox="0 0 380 420" fill="none">
+            <path d="M40 420 L40 210 Q40 40 190 40 Q340 40 340 210 L340 420" stroke="#c4603a" stroke-width="2.5" fill="rgba(196,96,58,0.04)"/>
+            <path d="M65 420 L65 218 Q65 75 190 75 Q315 75 315 218 L315 420" stroke="#c4973a" stroke-width="1.2" fill="none" opacity="0.5"/>
+            <path d="M40 210 Q40 150 80 120 Q105 140 115 170 Q75 190 75 210" fill="#c4603a" opacity="0.12"/>
+            <path d="M340 210 Q340 150 300 120 Q275 140 265 170 Q305 190 305 210" fill="#c4603a" opacity="0.12"/>
+            <g stroke="#c4973a" stroke-width="1" fill="none" opacity="0.7">
+              <path d="M75 216 L88 198 L101 216 L114 198 L127 216 L140 198 L153 216"/>
+              <path d="M227 216 L240 198 L253 216 L266 198 L279 216 L292 198 L305 216"/>
+            </g>
+            <g fill="none" stroke="rgba(196,151,58,0.45)" stroke-width="0.8">
+              <polygon points="190,50 202,68 190,86 178,68"/>
+              <polygon points="100,140 110,156 100,172 90,156"/>
+              <polygon points="280,140 290,156 280,172 270,156"/>
+            </g>
+          </svg>
+          <div class="venue-arch-content">
+            <p class="venue-name">AC Palacio de Santa Paula</p>
+            <p class="venue-addr">Gran Vía de Colón, 31 · Granada</p>
+          </div>
+        </div>
+
+        <!-- Google Maps -->
+        <div style="margin-top:2.5rem;">
+          <a href="https://maps.app.goo.gl/5rAtfLQf5ZzH1qhN8" target="_blank"
+             style="display:flex; align-items:center; justify-content:center; gap:1rem; padding:1.2rem 2rem; border:1px solid rgba(196,151,58,0.4); text-decoration:none; transition:border-color 0.3s, background 0.3s; background:#1a120a;"
+             onmouseover="this.style.borderColor='var(--gold)';this.style.background='#2a1e12'"
+             onmouseout="this.style.borderColor='rgba(196,151,58,0.4)';this.style.background='#1a120a'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4973a" stroke-width="1.5">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+            <div style="text-align:left;">
+              <p style="font-size:0.52rem; letter-spacing:0.35em; color:rgba(196,151,58,0.6); text-transform:uppercase; margin-bottom:0.25rem;">Cómo llegar</p>
+              <p style="font-size:0.9rem; color:var(--paper); font-family:'Tenor Sans',serif;">AC Palacio de Santa Paula</p>
+              <p style="font-size:0.75rem; color:rgba(253,246,237,0.45); font-style:italic; margin-top:0.15rem;">Gran Vía de Colón, 31 · Granada</p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(196,151,58,0.5)" stroke-width="1.5" style="margin-left:auto; flex-shrink:0;">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+        <div class="venue-callout">
+          <span class="venue-callout-icon">✦</span>
+          <p class="venue-callout-text" data-i18n="venue-callout">Un único lugar para todo el día: la ceremonia y el banquete se celebran en el mismo enclave. No tendréis que desplazaros entre dos sitios.</p>
+        </div>
+        <p class="s-text" style="margin-top:1.5rem;" data-i18n="venue-text">Un antiguo convento del siglo XVI convertido en el escenario perfecto para celebrar el amor. El Palacio de Santa Paula será el lugar donde compartiremos contigo uno de los días más especiales de nuestra vida.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTACTO / DUDAS -->
   <div class="rsvp-band">
     <div class="rsvp-inner reveal">
@@ -1138,9 +1329,10 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
           <div class="c-info"><span class="c-type" data-i18n="contact-oarda">Teléfono · Oarda</span><span class="c-val">+34 634 676 268</span></div>
         </a>
       </div>
-  </div>
+    </div>
 
-  <footer>Jose &amp; Oarda &nbsp;·&nbsp; 31 de Octubre de 2026 &nbsp;·&nbsp; Granada</footer>
+    <footer>Jose &amp; Oarda &nbsp;·&nbsp; 31 de Octubre de 2026 &nbsp;·&nbsp; Granada</footer>
+  </div><!-- end rsvp-band -->
 </div><!-- end main-content -->
 
 <script>
@@ -1172,8 +1364,12 @@ var T = {
     'friday-tag':'Pre-boda','friday-title':'Bienvenidos a Granada','friday-date':'Viernes 30 de octubre',
     'friday-intro':'Queremos que lleguéis con tiempo y que nos conozcamos todos antes del gran día. Os invitamos a una velada relajada para tomar algo, presentar a quien no se conoce y empezar a celebrar juntos.',
     'friday-body':'Nada de protocolo ni etiqueta: venid como estéis. Es la forma de empezar el fin de semana entre los nuestros y de poner cara a quien todavía no conozcáis.',
-    'friday-when-label':'Cuándo','friday-when':'Viernes 30 de octubre · a partir de las 20:00h',
-    'friday-where-label':'Dónde','friday-where':'Os confirmaremos el lugar muy pronto',
+    'friday-t1':'19:30','friday-s1-title':'Mirador de San Nicolás','friday-s1-badge':'Opcional',
+    'friday-s1-text':'Para los valientes: subimos a ver la Alhambra iluminada y bajamos andando todos juntos hasta Plaza Nueva — unos 20 minutos, todo cuesta abajo. Si no lo habéis visto nunca, merece muchísimo la pena.',
+    'friday-t2':'20:00','friday-s2-title':'La Cueva de 1900 · Santa Ana','friday-s2-badge':'Aperitivo',
+    'friday-s2-text':'Aquí estaremos todos. Es un aperitivo para tomar algo y picar juntos. Si os saltáis el mirador, nos vemos directamente aquí a las 20:00.',
+    'friday-map':'Cómo llegar','details-map':'Cómo llegar',
+    'friday-tip':'A esa hora ya habrá anochecido, así que desde el mirador se ve la Alhambra encendida. Si subís, traed calzado cómodo: la bajada del Albaicín es de cuesta y adoquín.',
     'after-tag':'Después del banquete','after-title':'After-party de Halloween',
     'after-intro':'El 31 de octubre es Halloween, así que seguimos la fiesta como toca. Hemos reservado zonas VIP para los que queráis estirar la noche con nosotros.',
     'after-venue':'Discoteca Aliatar',
@@ -1255,8 +1451,12 @@ var T = {
     'friday-tag':'Pre-wedding','friday-title':'Welcome to Granada','friday-date':'Friday, October 30th',
     'friday-intro':'We\'d love you to arrive in time so we can all meet before the big day. We\'re inviting everyone to a relaxed evening to have a drink, introduce those who don\'t know each other and start celebrating together.',
     'friday-body':'No protocol, no dress code: come as you are. It is our way of kicking off the weekend among our people and putting faces to names.',
-    'friday-when-label':'When','friday-when':'Friday, October 30th · from 8:00 PM',
-    'friday-where-label':'Where','friday-where':'We will confirm the venue very soon',
+    'friday-t1':'7:30 PM','friday-s1-title':'Mirador de San Nicolás','friday-s1-badge':'Optional',
+    'friday-s1-text':'For the brave: we head up to see the Alhambra lit up and walk down together to Plaza Nueva — about 20 minutes, all downhill. If you have never seen it, it is absolutely worth it.',
+    'friday-t2':'8:00 PM','friday-s2-title':'La Cueva de 1900 · Santa Ana','friday-s2-badge':'Drinks &amp; bites',
+    'friday-s2-text':'This is where we will all be. Drinks and a few bites together. If you skip the viewpoint, just meet us here at 8:00 PM.',
+    'friday-map':'How to get there','details-map':'How to get there',
+    'friday-tip':'It will be dark by then, so from the viewpoint you get the floodlit Alhambra. If you come up, wear comfortable shoes: the walk down through the Albaicín is steep and cobbled.',
     'after-tag':'After dinner','after-title':'Halloween after-party',
     'after-intro':'October 31st is Halloween, so we keep the party going as it should be. We\'ve reserved VIP areas for those of you who want to stretch the night out with us.',
     'after-venue':'Discoteca Aliatar',
@@ -1338,8 +1538,12 @@ var T = {
     'friday-tag':'Para dasmës','friday-title':'Mirë se erdhët në Granada','friday-date':'E premte, 30 Tetor',
     'friday-intro':'Duam që të mbërrini me kohë dhe të njihemi të gjithë para ditës së madhe. Ju ftojmë në një mbrëmje të qetë për të pirë diçka, për të njohur ata që nuk i njihni dhe për të filluar të festojmë së bashku.',
     'friday-body':'Pa protokoll dhe pa etiketë: ejani ashtu siç jeni. Është mënyra jonë për të nisur fundjavën mes të dashurve dhe për të njohur ata që ende nuk i keni takuar.',
-    'friday-when-label':'Kur','friday-when':'E premte, 30 Tetor · nga ora 20:00',
-    'friday-where-label':'Ku','friday-where':'Vendin do t\'jua konfirmojmë shumë shpejt',
+    'friday-t1':'19:30','friday-s1-title':'Mirador de San Nicolás','friday-s1-badge':'Opsionale',
+    'friday-s1-text':'Për trimat: ngjitemi për të parë Alhambran e ndriçuar dhe zbresim në këmbë të gjithë bashkë deri te Plaza Nueva — rreth 20 minuta, gjithë rruga tatëpjetë. Nëse nuk e keni parë kurrë, ia vlen vërtet.',
+    'friday-t2':'20:00','friday-s2-title':'La Cueva de 1900 · Santa Ana','friday-s2-badge':'Aperitiv',
+    'friday-s2-text':'Këtu do të jemi të gjithë. Një aperitiv për të pirë diçka dhe për të ngrënë ndonjë meze bashkë. Nëse nuk ngjiteni te belvederja, takohemi drejtpërdrejt këtu në orën 20:00.',
+    'friday-map':'Si të shkoni','details-map':'Si të shkoni',
+    'friday-tip':'Në atë orë do të ketë rënë nata, ndaj nga belvederja shihet Alhambra e ndriçuar. Nëse ngjiteni, vishni këpucë të rehatshme: zbritja nëpër Albaicín është e pjerrët dhe me kalldrëm.',
     'after-tag':'Pas banketit','after-title':'After-party Halloween',
     'after-intro':'31 Tetori është Halloween, ndaj festën e vazhdojmë siç i takon. Kemi rezervuar zona VIP për ata që duan ta zgjasin natën me ne.',
     'after-venue':'Discoteca Aliatar',
@@ -1585,9 +1789,13 @@ var G2 = {
 ['es','en','sq'].forEach(function(l){ for (var k in G2[l]) T[l][k] = G2[l][k]; });
 
 
-function setLang(lang, btn) {
-  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
+function setLang(lang) {
+  if (!T[lang]) lang = 'es';
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  document.documentElement.lang = lang;
+  try { localStorage.setItem('bodaLang', lang); } catch(e) {}
   var d = T[lang];
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var k = el.getAttribute('data-i18n');
@@ -1598,6 +1806,25 @@ function setLang(lang, btn) {
     if(d[k] !== undefined) el.placeholder = d[k];
   });
 }
+
+/* Portada de idioma: elegir y entrar */
+function chooseLang(lang) {
+  setLang(lang);
+  var gate = document.getElementById('lang-gate');
+  if (!gate) return;
+  gate.classList.add('closing');
+  setTimeout(function(){
+    document.documentElement.classList.remove('needs-lang');
+    gate.classList.remove('closing');
+  }, 500);
+}
+
+/* Aplica el idioma guardado al cargar */
+(function(){
+  var stored = null;
+  try { stored = localStorage.getItem('bodaLang'); } catch(e) {}
+  if (stored && T[stored]) setLang(stored);
+})();
 
 /* ══════════════════════════════
    COUNTDOWN
@@ -1614,10 +1841,22 @@ tick(); setInterval(tick, 1000);
 /* ══════════════════════════════
    SCROLL REVEAL
 ══════════════════════════════ */
-var obs = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
-}, {threshold:0.06});
-document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+/* Ojo con el umbral: un bloque muy alto (Granada, ~13.000 px en una columna)
+   nunca llega a tener un 6% visible en la pantalla de un móvil, y se quedaba
+   invisible para siempre. Con threshold 0 basta con que asome un píxel; el
+   rootMargin inferior retrasa un poco la entrada para que siga sintiéndose
+   como una aparición al hacer scroll. */
+var reveals = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, {threshold: 0, rootMargin: '0px 0px -12% 0px'});
+  reveals.forEach(function(el){ obs.observe(el); });
+} else {
+  reveals.forEach(function(el){ el.classList.add('visible'); });
+}
 
 /* ══════════════════════════════
    COPY IBAN
