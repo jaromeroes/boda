@@ -479,16 +479,17 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
 @media(max-width:600px){ .s-text { font-size: 1.05rem; } .g-desc { font-size: 0.95rem; } }
 </style>
 <script>
-/* Decide antes de pintar si hay que mostrar la portada de idioma */
+/* Decide antes de pintar si hay que mostrar la portada de idioma.
+   La portada se enseña una vez por sesión del navegador (sessionStorage), así que
+   vuelve a aparecer si abren la invitación en una pestaña nueva otro día, pero no
+   molesta al navegar dentro. El idioma elegido sí se recuerda siempre (localStorage). */
 (function(){
   document.documentElement.className += ' js';
-  var stored = null;
+  var stored = null, seen = null;
   try { stored = localStorage.getItem('bodaLang'); } catch(e) {}
-  if (['es','en','sq'].indexOf(stored) === -1) {
-    document.documentElement.className += ' needs-lang';
-  } else {
-    document.documentElement.lang = stored;
-  }
+  try { seen = sessionStorage.getItem('bodaGateSeen'); } catch(e) {}
+  if (['es','en','sq'].indexOf(stored) !== -1) document.documentElement.lang = stored;
+  if (seen !== '1') document.documentElement.className += ' needs-lang';
 })();
 </script>
 </head>
@@ -822,7 +823,6 @@ footer { background:var(--dark); border-top:1px solid rgba(196,151,58,0.1); padd
           <p class="iban-holder" data-i18n="iban-holder">A nombre de Jose Romero &amp; Oarda</p>
           <button class="iban-copy" type="button" onclick="copyIban(this)" data-i18n="iban-copy">Copiar IBAN</button>
         </div>
-        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--gold2);margin-top:1.6rem;" data-i18n="gift-cash">Aunque si os es más cómodo en efectivo, mejor ;)</p>
       </div>
     </div>
   </div>
@@ -1413,7 +1413,6 @@ var T = {
     'transport-local-desc':'El casco histórico se recorre a pie. Para subir al Albaicín o al Sacromonte hay micro-buses (líneas C1, C2, C3) y taxis baratos. Cabify y FreeNow funcionan bien.',
     'gift-tag':'Un detalle','gift-title':'Si queréis regalarnos algo',
     'gift-quote':'"Vuestra presencia es ya el mejor de los regalos. Pero si queréis contribuir a nuestra luna de miel y a empezar juntos esta nueva etapa, lo recibiremos con muchísima ilusión."',
-    'gift-cash':'Aunque si os es más cómodo en efectivo, mejor ;)',
     'iban-label':'IBAN · Unicaja Banco','iban-value':'ES34 2103 0182 1100 3002 7257','iban-holder':'A nombre de Jose Romero &amp; Oarda','iban-copy':'Copiar IBAN','iban-copied':'¡Copiado!',
     'other-contact':'Otras formas de contacto',
     'rsvp-tag':'Confirmación de asistencia','rsvp-title':'¿Estarás con nosotros?',
@@ -1500,7 +1499,6 @@ var T = {
     'transport-local-desc':'The old town is walkable. To go up to the Albaicín or Sacromonte there are mini-buses (lines C1, C2, C3) and cheap taxis. Cabify and FreeNow work well.',
     'gift-tag':'A little something','gift-title':'If you\'d like to gift us something',
     'gift-quote':'"Your presence is already the greatest gift. But if you would like to contribute to our honeymoon and to the start of this new chapter together, we will receive it with so much joy."',
-    'gift-cash':'Although if cash is easier for you, even better ;)',
     'iban-label':'IBAN · Unicaja Banco','iban-value':'ES34 2103 0182 1100 3002 7257','iban-holder':'In the name of Jose Romero &amp; Oarda','iban-copy':'Copy IBAN','iban-copied':'Copied!',
     'other-contact':'Other ways to contact us',
     'rsvp-tag':'RSVP','rsvp-title':'Will you join us?',
@@ -1517,44 +1515,44 @@ var T = {
   sq: {
     'hero-tag':'Gjithnjë e më afër','hero-date1':'31 Tetor 2026','hero-date2':'E shtunë · 12:00 · Granada',
     'help-tag':'Keni ndonjë pyetje?','help-title':'Jemi vetëm një mesazh larg',
-    'help-text':'Për çfarëdo gjëje —një pyetje, një ndryshim të minutës së fundit ose thjesht për të përshëndetur— na shkruani drejtpërdrejt. Do t\'ju përgjigjemi me kënaqësi.',
+    'help-text':'Për çdo gjë —një pyetje, një ndryshim në minutën e fundit ose thjesht për të na përshëndetur— na shkruani direkt. Ju përgjigjemi menjëherë.',
     'scroll-cue':'Zbulo','cd-label':'Numërim mbrapsht',
     'cd-title':'Deri në ditën e madhe',
     'cd-days':'Ditë','cd-hours':'Orë','cd-mins':'Minuta','cd-secs':'Sekonda',
     'photo-caption':'Granada · Tetor 2026',
     'story-tag':'Historia jonë','story-title':'Si arritëm këtu',
-    'story-quote':'"Granada na bashkoi, dhe Granada do të jetë dëshmitare si themi po përgjithmonë."',
-    'story-text':'Disa qytete ndryshojnë gjithçka. Për ne, ai qytet është Granada. Mes rrugëve të saj dhe jehonës së Alhambra, historia jonë filloi të shkruhej.<br><br>Sot duam të ndajmë me ju kapitullin më të bukur: të bëhemi familje. Faleminderit që jeni pjesë e kësaj dite të veçantë.',
+    'story-quote':'"Granada na bashkoi, dhe Granada do të jetë dëshmitare kur të themi po përgjithmonë."',
+    'story-text':'Ka qytete që ta ndajnë jetën në një para dhe një pas. Për ne, ai qytet është Granada. Mes rrugëve të saj dhe jehonës së Alhambrës nisi të shkruhej historia jonë.<br><br>Sot duam ta ndajmë me ju kapitullin më të bukur: atë ku bëhemi familje. Faleminderit që jeni pjesë e kësaj dite kaq të veçantë për ne.',
     'venue-tag':'Vendi','venue-title':'Ceremonia &amp; Festimi',
-    'venue-callout':'Një vend i vetëm për gjithë ditën: ceremonia dhe banketi do të zhvillohen në të njëjtin enklave. Nuk do t\'ju duhet të lëvizni nga njëri vend në tjetrin.',
-    'venue-text':'Një manastir i shekullit XVI i shndërruar në skenën perfekte për të festuar dashurinë. Pallati i Santa Paulës do të jetë vendi ku do të ndajmë me ju një nga ditët më të veçanta të jetës sonë.',
+    'venue-callout':'Gjithçka në një vend të vetëm: ceremonia dhe banketi janë në të njëjtin ambient. S\'ju duhet të lëvizni fare nga një vend në tjetrin.',
+    'venue-text':'Një manastir i shekullit XVI kthyer në skenën perfekte për të festuar dashurinë. Pallati i Santa Paulës do të jetë vendi ku do të ndajmë me ju një nga ditët më të bukura të jetës sonë.',
     'details-tag':'E shtunë · 31 Tetor','details-title':'Si do të jetë dita',
-    'details-intro':'Ju presim të gjithëve në Pallatin e Santa Paulës. Ceremonia dhe festimi në të njëjtin vend — vetëm duhet të mbërrini dhe të lini veten të rrjedhë.',
+    'details-intro':'Ju presim të gjithëve në Pallatin e Santa Paulës. Ceremonia dhe festa në të njëjtin vend — ju vetëm ejani dhe lëreni veten të shkojë me rrjedhën.',
     'tl-label-1':'Pritja','tl-desc-1':'Mbërritja e të ftuarve në Pallatin e Santa Paulës.',
-    'tl-label-2':'Ceremonia','tl-desc-2':'Momenti i po-së. Ju lutemi të jeni të ulur disa minuta më parë.',
-    'tl-label-3':'Banket dhe festë','tl-desc-3':'Koktej mirëseardhjeje në oborre ndërsa bëjmë fotot, banket nën qemerët e manastirit të vjetër dhe, më pas, vallëzim me bar të hapur deri natën vonë.',
-    'tl-label-4':'After-party','tl-desc-4':'Vazhdojmë festën në një zonë të rezervuar të Discoteca Aliatar, në zemër të Granadës, pak minuta në këmbë nga Pallati i Santa Paulës.',
-    'day-note':'After-party-ja e Halloween vazhdon menjëherë pas në Discoteca Aliatar — nuk duhet të ndërroheni, festa vazhdon ashtu siç është.',
+    'tl-label-2':'Ceremonia','tl-desc-2':'Momenti i po-së. Provoni të jeni ulur ndonjë minutë më parë.',
+    'tl-label-3':'Banket dhe festë','tl-desc-3':'Koktej mirëseardhjeje në oborre ndërsa bëjmë fotot, banket nën qemerët e manastirit të vjetër dhe pastaj vallëzim me bar të hapur deri natën vonë.',
+    'tl-label-4':'After-party','tl-desc-4':'Festa vazhdon në një zonë të rezervuar te Discoteca Aliatar, në zemër të Granadës, pak minuta në këmbë nga Pallati i Santa Paulës.',
+    'day-note':'After-party-ja e Halloween-it fillon menjëherë pas, te Discoteca Aliatar — s\'ju duhet të ndërroheni, vazhdojmë ashtu siç jemi.',
     'friday-tag':'Para dasmës','friday-title':'Mirë se erdhët në Granada','friday-date':'E premte, 30 Tetor',
-    'friday-intro':'Duam që të mbërrini me kohë dhe të njihemi të gjithë para ditës së madhe. Ju ftojmë në një mbrëmje të qetë për të pirë diçka, për të njohur ata që nuk i njihni dhe për të filluar të festojmë së bashku.',
-    'friday-body':'Pa protokoll dhe pa etiketë: ejani ashtu siç jeni. Është mënyra jonë për të nisur fundjavën mes të dashurve dhe për të njohur ata që ende nuk i keni takuar.',
+    'friday-intro':'Duam që të vini me kohë dhe të njihemi të gjithë para ditës së madhe. Ju ftojmë në një mbrëmje të qetë: pimë diçka, njiheni me ata që s\'i keni takuar ende dhe e nisim festën bashkë.',
+    'friday-body':'Pa protokoll dhe pa etiketë: ejani ashtu siç jeni. Është mënyra jonë për ta nisur fundjavën me njerëzit tanë.',
     'friday-t1':'19:30','friday-s1-title':'Mirador de San Nicolás','friday-s1-badge':'Opsionale',
-    'friday-s1-text':'Për trimat: ngjitemi për të parë Alhambran e ndriçuar dhe zbresim në këmbë të gjithë bashkë deri te Plaza Nueva — rreth 20 minuta, gjithë rruga tatëpjetë. Nëse nuk e keni parë kurrë, ia vlen vërtet.',
+    'friday-s1-text':'Për trimat: ngjitemi të shohim Alhambrën e ndriçuar dhe zbresim në këmbë të gjithë bashkë deri te Plaza Nueva — rreth 20 minuta, gjithë rruga tatëpjetë. Nëse s\'e keni parë kurrë, ia vlen shumë.',
     'friday-t2':'20:00','friday-s2-title':'La Cueva de 1900 · Santa Ana','friday-s2-badge':'Aperitiv',
-    'friday-s2-text':'Këtu do të jemi të gjithë. Një aperitiv për të pirë diçka dhe për të ngrënë ndonjë meze bashkë. Nëse nuk ngjiteni te belvederja, takohemi drejtpërdrejt këtu në orën 20:00.',
+    'friday-s2-text':'Këtu do të jemi të gjithë. Një aperitiv për të pirë diçka dhe për të ngrënë ndonjë meze bashkë. Nëse s\'ngjiteni te belvederja, takohemi direkt këtu në orën 20:00.',
     'friday-map':'Si të shkoni','details-map':'Si të shkoni',
-    'friday-tip':'Në atë orë do të ketë rënë nata, ndaj nga belvederja shihet Alhambra e ndriçuar. Nëse ngjiteni, vishni këpucë të rehatshme: zbritja nëpër Albaicín është e pjerrët dhe me kalldrëm.',
+    'friday-tip':'Në atë orë do të ketë rënë nata, ndaj nga belvederja duket Alhambra e ndriçuar. Nëse ngjiteni, vishni këpucë të rehatshme: zbritja nëpër Albaicín është e pjerrët dhe me kalldrëm.',
     'after-tag':'Pas banketit','after-title':'After-party Halloween',
-    'after-intro':'31 Tetori është Halloween, ndaj festën e vazhdojmë siç i takon. Kemi rezervuar zona VIP për ata që duan ta zgjasin natën me ne.',
+    'after-intro':'31 Tetori është Halloween, ndaj festën e vazhdojmë siç e do puna. Kemi rezervuar zona VIP për ata që duan ta zgjasin natën me ne.',
     'after-venue':'Discoteca Aliatar',
     'after-addr':'C. Recogidas, 2 · Qendra e Granadës',
-    'after-body':'Shkojmë drejtpërdrejt nga Pallati i Santa Paulës, pa pushim. Nuk duhet të ndërroheni: nga dasma në after-party pa ndalim. Zonat janë rezervuar ekskluzivisht për të ftuarit.',
+    'after-body':'Shkojmë direkt nga Pallati i Santa Paulës, pa ndalesa. S\'ju duhet të ndërroheni: nga dasma te after-party pa u ndalur fare. Zonat janë vetëm për ne.',
     'after-badge':'Zona VIP të rezervuara','after-map':'Si të arrini',
     'granada-tag':'Për ata që vijnë nga larg','granada-title':'Shijoni Granadën',
-    'granada-intro':'Nëse vini nga larg, ia vlen të qëndroni ndonjë ditë më shumë. Këto janë rekomandimet tona, të atyre që jetojmë këtu dhe e duam.',
-    'granada-tickets':'<strong>Biletat për Alhambra.</strong> Blihen në faqen zyrtare të Patronato-s dhe mbarojnë shpejt: datat më të mira shiten javë përpara. Nëse doni ta vizitoni, rezervoni sa më herët në <a href="https://tickets.alhambra-patronato.es/" target="_blank" rel="noopener" style="color:var(--terra);border-bottom:1px solid rgba(196,96,58,0.4);">tickets.alhambra-patronato.es</a>.',
+    'granada-intro':'Nëse vini nga larg, ia vlen të rrini ndonjë ditë më shumë. Këto janë rekomandimet tona, të atyre që jetojmë këtu dhe e duam qytetin.',
+    'granada-tickets':'<strong>Biletat për Alhambrën.</strong> Blihen në faqen zyrtare të Patronato-s dhe mbarojnë shpejt: datat më të mira shiten javë përpara. Nëse doni ta shihni, rezervoni sa më herët në <a href="https://tickets.alhambra-patronato.es/" target="_blank" rel="noopener" style="color:var(--terra);border-bottom:1px solid rgba(196,96,58,0.4);">tickets.alhambra-patronato.es</a>.',
     'granada-c1-sub':'Të domosdoshmet','granada-c1-title':'Çfarë të shihni',
-    'granada-c1-i1':'<strong>Alhambra dhe Generalife</strong>Rezervoni biletat javë para. Monumenti më i vizituar i Spanjës nuk është rastësi.',
+    'granada-c1-i1':'<strong>Alhambra dhe Generalife</strong>Rezervoni biletat javë para. S\'është kot monumenti më i vizituar i Spanjës.',
     'granada-c1-i2':'<strong>Mirador de San Nicolás</strong>Kartolina e qytetit: Alhambra me Sierra Nevada-n në sfond. Më mirë në perëndim të diellit.',
     'granada-c1-i3':'<strong>Katedralja dhe Kapela Mbretërore</strong>Vendi i prehjes së Mbretërve Katolikë, në qendër.',
     'granada-c1-i4':'<strong>Monasterio de la Cartuja</strong>Baroku granadin në versionin më të bujshëm.',
@@ -1574,32 +1572,31 @@ var T = {
     'granada-c4-i3':'<strong>Çajtoret e Calderería-s</strong>Rruga e çajtoreve, mes qendrës dhe Albaicín-it: çaj maurë, erëza dhe ajër andaluzian.',
     'granada-c4-i4':'<strong>Sierra Nevada dhe bregdeti</strong>45 minuta me makinë dhe keni ose borën e Sierra Nevada-s ose plazhet e Costa Tropical. Ju zgjidhni.',
     'hotels-tag':'Ku të flini','hotels-title':'Akomodimi',
-    'hotels-intro':'Granada ka akomodim për çdo shije dhe buxhet, dhe pothuajse gjithçka është një shëtitje e shkurtër nga Pallati i Santa Paulës. Nga hotele simpatikë në qendër deri te opsione më të thjeshta dhjetë minuta në këmbë.',
-    'hotels-note':'Nuk dini nga të filloni ose keni pyetje për rezervimin? Na shkruani pa asnjë detyrim dhe ju ndihmojmë të gjeni vendin që ju përshtatet më mirë.',
+    'hotels-intro':'Granada ka fjetje për çdo shije dhe për çdo xhep, dhe pothuajse gjithçka është dy hapa nga Pallati i Santa Paulës. Nga hotele me hijeshi në qendër deri te opsione më të thjeshta dhjetë minuta në këmbë.',
+    'hotels-note':'S\'dini nga t\'ia filloni ose keni ndonjë dyshim me rezervimin? Na shkruani pa problem dhe ju japim një dorë për të gjetur vendin që ju shkon më mirë.',
     'transport-tag':'Si të mbërrini','transport-title':'Mbërritja dhe lëvizja',
     'transport-plane-label':'Me avion',
     'transport-plane-desc':'Aeroporti Federico García Lorca (GRX), 20 minuta me taksi nga qendra. Edhe Málaga (1h 30min me makinë ose autobus), me më shumë lidhje ndërkombëtare.',
     'transport-train-label':'Me tren',
     'transport-train-desc':'AVE direkt nga Madridi (3h 20min) dhe Barcelona (6h 30min). Stacioni është 15 minuta në këmbë nga qendra.',
     'transport-car-label':'Me makinë',
-    'transport-car-desc':'Granada është mirë e lidhur përmes A-44 nga Málaga dhe A-92 nga Sevilla. Kujdes: qendra ka zona këmbësorësh dhe parkimi mund të jetë sfidë — më mirë parking publik ose në hotel.',
+    'transport-car-desc':'Granada lidhet mirë me A-44 nga Málaga dhe A-92 nga Sevilla. Kujdes: qendra ka zona këmbësorësh dhe parkimi është pak sherr — më mirë lëreni makinën në një parking publik ose në hotel.',
     'transport-local-label':'Kur të jeni këtu',
-    'transport-local-desc':'Qendra historike ecet në këmbë. Për të ngjitur në Albaicín ose Sacromonte ka mini-autobusë (linjat C1, C2, C3) dhe taksi të lirë. Cabify dhe FreeNow funksionojnë mirë.',
+    'transport-local-desc':'Qendra historike bëhet e gjitha në këmbë. Për të ngjitur në Albaicín ose Sacromonte ka mini-autobusë (linjat C1, C2, C3) dhe taksi të lira. Cabify dhe FreeNow punojnë mirë.',
     'gift-tag':'Një detaj','gift-title':'Nëse doni të na bëni një dhuratë',
-    'gift-quote':'"Prania juaj është tashmë dhurata më e bukur. Por nëse doni të kontribuoni në muajin tonë të mjaltit dhe në fillimin e kësaj etape të re bashkë, do ta presim me shumë gëzim."',
-    'gift-cash':'Edhe pse nëse është më e lehtë me para në dorë, akoma më mirë ;)',
+    'gift-quote':'"Që jeni këtu me ne është tashmë dhurata më e bukur. Por nëse doni të na jepni një dorë me muajin e mjaltit dhe me nisjen e kësaj etape të re bashkë, do ta presim me shumë gëzim."',
     'iban-label':'IBAN · Unicaja Banco','iban-value':'ES34 2103 0182 1100 3002 7257','iban-holder':'Në emër të Jose Romero &amp; Oarda','iban-copy':'Kopjo IBAN','iban-copied':'U kopjua!',
-    'other-contact':'Mënyra të tjera kontakti',
+    'other-contact':'Na gjeni edhe këtu',
     'rsvp-tag':'Konfirmimi i pranisë','rsvp-title':'Do të jesh me ne?',
-    'rsvp-intro':'Ju lutemi konfirmoni para <strong style="color:var(--gold2)">15 Korrik 2026</strong>.<br>Nëpërmjet formularit ose duke na kontaktuar drejtpërdrejt.',
-    'rsvp-notice':'📋 &nbsp;Për momentin na duhet vetëm të dimë nëse do të vini. Detajet finale (oraret e sakta, after-party, IBAN dhe të tjera) do t\'i përditësojmë këtu në muajt e ardhshëm.',
+    'rsvp-intro':'Na konfirmoni para <strong style="color:var(--gold2)">15 Korrik 2026</strong>.<br>Me formularin ose duke na shkruar direkt.',
+    'rsvp-notice':'📋 &nbsp;Për momentin duam të dimë vetëm nëse do të vini. Pjesën tjetër (oraret e sakta, after-party, IBAN e të tjera) do ta përditësojmë këtu në muajt që vijnë.',
     'contact-email':'Email','contact-jose':'Telefon · Jose','contact-oarda':'Telefon · Oarda',
     'form-name':'Emri i plotë','form-attend':'Do të vish?','form-select':'Zgjidh një opsion',
     'form-yes':'Po, do të jem atje!','form-no':'Fatkeqësisht nuk mund të vij',
     'form-guests':'Numri i të ftuarve','form-solo':'Vetëm unë','form-plus1':'+ 1 i ftuar',
     'form-plus2':'+ 2 të ftuar','form-plus3':'+ 3 ose më shumë',
     'form-diet':'Alergji ose kufizime ushqimore','form-btn':'Konfirmo praninë',
-    'ph-name':'Emri dhe mbiemri','ph-diet':'Na tregoni nëse keni ndonjë nevojë të veçantë...'
+    'ph-name':'Emri dhe mbiemri','ph-diet':'Na thoni nëse keni ndonjë nevojë të veçantë...'
   }
 };
 
@@ -1699,7 +1696,7 @@ var G = {
     'story-cap':'Granada, where it all began'
   },
   sq: {
-    'g-alhambra-t':'Alhambra dhe Generalife','g-alhambra-d':'Rezervoni biletat javë para. Monumenti më i vizituar i Spanjës nuk është rastësi.',
+    'g-alhambra-t':'Alhambra dhe Generalife','g-alhambra-d':'Rezervoni biletat javë para. S\'është kot monumenti më i vizituar i Spanjës.',
     'g-mirador-t':'Mirador de San Nicolás','g-mirador-d':'Kartolina e qytetit: Alhambra me Sierra Nevada-n në sfond. Më mirë në perëndim të diellit.',
     'g-catedral-t':'Katedralja dhe Kapela Mbretërore','g-catedral-d':'Vendi i prehjes së Mbretërve Katolikë, në qendër.',
     'g-carlosv-t':'Pallati i Karlit V','g-carlosv-d':'Oborri rrethor rilindas brenda Alhambrës. Hyrja është falas.',
@@ -1720,10 +1717,10 @@ var G = {
     'g-costa-t':'Costa Tropical','g-costa-d':'Në më pak se një orë, plazhet e Salobreña-s, Almuñécar-it dhe La Herradura-s. Det i butë dhe gjire simpatike.',
     'steps-tag':'Gjithnjë e më afër',
     'steps-title':'Hapat e ardhshëm',
-    'steps-intro':'Faleminderit që konfirmuat praninë tuaj — ka shumë vlerë për ne. Gati sa nuk ka mbetur. Ja gjithçka me një shikim: mbrëmja para dasmës të premten, dita e madhe të shtunën dhe gjithçka që mund të shijoni në Granada.',
+    'steps-intro':'Faleminderit që konfirmuat — ka shumë vlerë për ne. S\'ka mbetur gati fare. Ja gjithçka me një sy: mbrëmja para dasmës të premten, dita e madhe të shtunën dhe gjithçka që mund të shijoni në Granada.',
     'step1-when':'E premte, 30 Tetor',
     'step1-title':'Para dasmës',
-    'step1-text':'Takohemi një mbrëmje para për një mbledhje të qetë, të njohim njëri-tjetrin dhe të nisim festën pa nxitim.',
+    'step1-text':'Takohemi një mbrëmje para për një mbledhje të qetë, të njihemi me njëri-tjetrin dhe ta nisim festën pa nxitim.',
     'step1-go':'Mirëseardhja',
     'step2-when':'E shtunë, 31 Tetor',
     'step2-title':'Dita e madhe',
@@ -1731,7 +1728,7 @@ var G = {
     'step2-go':'Plani i ditës',
     'step3-when':'Para dhe pas',
     'step3-title':'Granada juaj',
-    'step3-text':'Nëse vini nga larg, qëndroni ndonjë ditë: ju tregojmë çfarë të shihni, ku të hani tapas dhe ku të humbni.',
+    'step3-text':'Nëse vini nga larg, rrini ndonjë ditë: ju tregojmë çfarë të shihni, ku të hani tapas dhe ku ia vlen të humbisni.',
     'step3-go':'Zbulo Granadën',
     'cat-ver':'Çfarë të shihni',
     'cat-tapear':'Ha & tapas',
@@ -1810,6 +1807,7 @@ function setLang(lang) {
 /* Portada de idioma: elegir y entrar */
 function chooseLang(lang) {
   setLang(lang);
+  try { sessionStorage.setItem('bodaGateSeen', '1'); } catch(e) {}
   var gate = document.getElementById('lang-gate');
   if (!gate) return;
   gate.classList.add('closing');
